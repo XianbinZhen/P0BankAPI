@@ -31,6 +31,19 @@ public class ClientDaoLocal implements ClientDAO{
     }
 
     @Override
+    public Set<Client> getClientByName(String name) {
+        Set<Client> allClient = getAllClients();
+        Set<Client> result = new HashSet<>();
+        for (Client client : allClient) {
+            if(client.getFirstName().toLowerCase().contains(name.toLowerCase()) ||
+               client.getLastName().toLowerCase().contains(name.toLowerCase())) {
+                result.add(client);
+            }
+        }
+        return result;
+    }
+
+    @Override
     public Client updateClient(Client client) {
         int id = client.getId();
         clientTable.put(id, client);

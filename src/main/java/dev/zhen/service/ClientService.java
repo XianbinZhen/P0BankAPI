@@ -1,10 +1,10 @@
-package dev.zhen.daos;
+package dev.zhen.service;
 
 import dev.zhen.entities.Client;
 
 import java.util.Set;
 
-public interface ClientDAO {
+public interface ClientService {
 
     Client createClient(Client client);
     Set<Client> getAllClients();
