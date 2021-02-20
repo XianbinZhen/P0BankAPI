@@ -23,7 +23,6 @@ public class AccountServiceTests {
         account = account1;
         Assertions.assertEquals(1, account1.getAccountId());
         Assertions.assertEquals(System.currentTimeMillis() / 1000, account1.getCreatedDate(), 100);
-        System.out.println("TEST 0 passed: create account");
     }
 
     @Test
@@ -33,7 +32,6 @@ public class AccountServiceTests {
         Account updateAccount = new Account(0,0,oldBalance + 11, true,0);
         accountService.updateAccount(account.getAccountId(), updateAccount);
         Assertions.assertEquals(11 + oldBalance, account.getBalance());
-        System.out.println("TEST 1 passed: Update account");
     }
 
     @Test
@@ -41,7 +39,6 @@ public class AccountServiceTests {
     void get_all_account() {
         Set<Account> allAccount = new HashSet<>(accountService.getAllAccountsByClientId(1));
         Assertions.assertEquals(1, allAccount.size());
-        System.out.println("TEST 2 passed: Get all account");
     }
 
     @Test
@@ -53,8 +50,6 @@ public class AccountServiceTests {
         int sizeAfterDelete = accountService.getAllAccounts().size();
         Assertions.assertTrue(isDeleted);
         Assertions.assertEquals(sizeAfterDelete + 1, sizeBeforeDelete);
-        System.out.println("TEST 3 passed: Delete account by id");
-
     }
 
 
