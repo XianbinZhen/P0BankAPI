@@ -10,7 +10,7 @@ public interface AccountService {
     Set<Account> getAllAccounts();
     Set<Account> getAllAccountsByClientId(int clientId);
     Account getAccountById(int id);
-    Account updateAccountBalance(int id, double amount);
+    Account updateAccount(int id, Account updateAccount);
     boolean deleteAccountById(int id);
 
 }

@@ -44,9 +44,9 @@ public class AccountDaoLoacal implements AccountDAO{
     }
 
     @Override
-    public Account updateAccountBalance(int id, double amount) {
+    public Account updateAccount(int id, Account updateAccount) {
         Account account = accountTable.get(id);
-        account.setBalance(account.getBalance() + amount);
+        account.setBalance(updateAccount.getBalance());
         return account;
     }
 

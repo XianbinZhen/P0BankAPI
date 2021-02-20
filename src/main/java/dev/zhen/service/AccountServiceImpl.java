@@ -1,7 +1,6 @@
 package dev.zhen.service;
 
 import dev.zhen.daos.AccountDAO;
-import dev.zhen.daos.AccountDaoLoacal;
 import dev.zhen.entities.Account;
 
 import java.util.Set;
@@ -35,8 +34,8 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public Account updateAccountBalance(int id, double amount) {
-        return accountDAO.updateAccountBalance(id, amount);
+    public Account updateAccount(int id, Account updateAccount) {
+        return accountDAO.updateAccount(id, updateAccount);
     }
 
     @Override

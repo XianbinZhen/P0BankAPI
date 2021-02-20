@@ -1,6 +1,5 @@
 package dev.zhen.serviceTest;
 
-import dev.zhen.daos.AccountDAO;
 import dev.zhen.daos.AccountDaoLoacal;
 import dev.zhen.entities.Account;
 import dev.zhen.service.AccountService;
@@ -31,8 +30,9 @@ public class AccountServiceTests {
     @Order(1)
     void update_account() {
         double oldBalance = account.getBalance();
-        accountService.updateAccountBalance(account.getAccountId(), 100);
-        Assertions.assertEquals(100 + oldBalance, account.getBalance());
+        Account updateAccount = new Account(0,0,oldBalance + 11, true,0);
+        accountService.updateAccount(account.getAccountId(), updateAccount);
+        Assertions.assertEquals(11 + oldBalance, account.getBalance());
         System.out.println("TEST 1 passed: Update account");
     }
 

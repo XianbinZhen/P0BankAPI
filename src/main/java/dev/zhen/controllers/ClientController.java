@@ -25,6 +25,7 @@ public class ClientController {
             ctx.status(201);
         } else {
             ctx.result("Failed to create client: Body can't be empty.");
+            ctx.status(400);
         }
     };
 
@@ -38,11 +39,11 @@ public class ClientController {
         }
         String allClientJSON = gson.toJson(allClients);
         ctx.result(allClientJSON);
-        ctx.status(201);
+        ctx.status(200);
     };
 
     public Handler getClientByIdHandler = ctx -> {
-        String id = ctx.pathParam("id");
+        String id = ctx.pathParam("cid");
         Client client = clientService.getClientById(Integer.parseInt(id));
         if (client == null) {
             ctx.result("Client not found");
@@ -50,12 +51,12 @@ public class ClientController {
         } else {
             String clientJSON = gson.toJson(client);
             ctx.result(clientJSON);
-            ctx.status(201);
+            ctx.status(200);
         }
     };
 
     public Handler updateClientHandler = ctx -> {
-        int id = Integer.parseInt(ctx.pathParam("id"));
+        int id = Integer.parseInt(ctx.pathParam("cid"));
         String body = ctx.body();
         Client client = gson.fromJson(body, Client.class);
         if (client != null) {
@@ -76,7 +77,7 @@ public class ClientController {
     };
 
     public Handler deleteClientByIdHandler = ctx -> {
-        int id = Integer.parseInt(ctx.pathParam("id"));
+        int id = Integer.parseInt(ctx.pathParam("cid"));
         boolean isDeleted = clientService.deleteClientById(id);
         if (isDeleted) {
             ctx.result("Client with id: " + id + " is deleted");
