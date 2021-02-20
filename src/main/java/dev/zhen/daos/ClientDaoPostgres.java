@@ -99,35 +99,41 @@ public class ClientDaoPostgres implements ClientDAO{
 
     @Override
     public Client updateClient(Client client) {
-        try (Connection connection = ConnectionUtil.createConnection()) {
-            String sql = "update client (first_name, last_name, created_date) values (?,?,?) where client_id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, client.getFirstName());
-            preparedStatement.setString(2, client.getLastName());
-            preparedStatement.setLong(3, client.getCreatedDate());
-            preparedStatement.setInt(4, client.getId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
+        Client searchClient = getClientById(client.getId());
+        if (searchClient != null) {
+            try (Connection connection = ConnectionUtil.createConnection()) {
+                String sql = "update client set first_name = ?, last_name = ?, created_date= ? where client_id = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, client.getFirstName());
+                preparedStatement.setString(2, client.getLastName());
+                preparedStatement.setLong(3, client.getCreatedDate());
+                preparedStatement.setInt(4, client.getId());
+                preparedStatement.execute();
                 return client;
-            } else
+            } catch (SQLException sqlException) {
+                logger.error("Failed to update client", sqlException);
                 return null;
-        } catch (SQLException sqlException) {
-            logger.error("Failed to update client", sqlException);
+            }
+        } else {
             return null;
         }
     }
 
     @Override
     public boolean deleteClientById(int id) {
-        try (Connection connection = ConnectionUtil.createConnection()) {
-            String sql = "delete from client where client_id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
-            preparedStatement.execute();
-            // TODO need to check whether delete 0 or 1 record
-            return true;
-        } catch (SQLException sqlException) {
-            logger.info("Failed to delete client", sqlException);
+        Client client = getClientById(id);
+        if (client != null) {
+            try (Connection connection = ConnectionUtil.createConnection()) {
+                String sql = "delete from client where client_id = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, id);
+                preparedStatement.execute();
+                return true;
+            } catch (SQLException sqlException) {
+                logger.info("Failed to delete client", sqlException);
+                return false;
+            }
+        } else {
             return false;
         }
     }

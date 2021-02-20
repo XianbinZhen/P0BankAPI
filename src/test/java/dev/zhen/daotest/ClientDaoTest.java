@@ -40,6 +40,16 @@ public class ClientDaoTest {
 
     @Test
     @Order(3)
+    void update_client_by_id() {
+        Client client5 = new Client(0,"New Michael","Jordan",0);
+        client5 = clientDAO.createClient(client5);
+        Client returnClient = clientDAO.updateClient(client5);
+        Assertions.assertEquals(client5.getId(), returnClient.getId());
+        Assertions.assertTrue(client5.getFirstName().equals(returnClient.getFirstName()));
+    }
+
+    @Test
+    @Order(4)
     void delete_client_by_id() {
         Client client4 = new Client(0,"New Michael","Jordan",0);
         clientDAO.createClient(client4);
