@@ -166,13 +166,17 @@ public class AccountDaoPostgres implements AccountDAO{
                 return null;
             } else {
                 try (Connection connection = ConnectionUtil.createConnection()) {
-                    String sql = "update account set balance = ? where account_id = ?";
+                    String sql = "update account set balance = ?, client_id = ?, created_date = ?, is_checking = ? where account_id = ?";
                     PreparedStatement preparedStatement = connection.prepareStatement(sql);
                     preparedStatement.setDouble(1,newBalance);
-                    preparedStatement.setInt(2, id);
+                    preparedStatement.setInt(2, account.getClientId());
+                    preparedStatement.setLong(3, updateAccount.getCreatedDate());
+                    preparedStatement.setBoolean(4, updateAccount.isCheckingAccount());
+                    preparedStatement.setInt(5, id);
                     preparedStatement.execute();
-                    account.setBalance(newBalance);
-                    return account;
+                    updateAccount.setAccountId(id);
+                    updateAccount.setClientId(account.getClientId());
+                    return updateAccount;
                 } catch (SQLException sqlException) {
                     logger.error("Failed to update account", sqlException);
                     return null;

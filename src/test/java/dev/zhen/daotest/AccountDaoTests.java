@@ -4,12 +4,11 @@ import dev.zhen.daos.*;
 import dev.zhen.entities.Account;
 import dev.zhen.entities.Client;
 import org.junit.jupiter.api.*;
-
 import java.util.Set;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AccountDaoTests {
-//    private static Logger logger = Logger.getLogger(AccountDaoTests.class.getName());
+
     private static AccountDAO accountDAO = new AccountDaoPostgres();
     private static ClientDAO clientDAO = new ClientDaoPostgres();
     private static Account account = null;
@@ -19,10 +18,10 @@ public class AccountDaoTests {
     @Order(0)
     void create_account() {
         client = clientDAO.createClient(new Client(0,"Larry", "Bird",0));
-        Account account1 = new Account(0,0,0, true, 0);
+        Account account1 = new Account(0,0,100, true, 0);
         account = accountDAO.createAccount(client.getId(), account1);
         long createdDate = account.getCreatedDate();
-        Assertions.assertEquals(System.currentTimeMillis() / 1000, account1.getCreatedDate(), 100);
+        Assertions.assertEquals(System.currentTimeMillis() / 1000, createdDate, 100);
         int firstId = account.getAccountId();
         Account account2 = accountDAO.createAccount(client.getId(), account1);
         Assertions.assertEquals(firstId + 1, account2.getAccountId());
@@ -34,20 +33,21 @@ public class AccountDaoTests {
         Account account2 = accountDAO.getAccountById(account.getAccountId());
         Assertions.assertEquals(account2.getAccountId(), account.getAccountId());
         Assertions.assertEquals(account2.getCreatedDate(), account.getCreatedDate());
-
     }
 
     @Test
     @Order(2)
     void update_account() {
         double oldBalance = account.getBalance();
-        Account updateAccount = new Account(0,0,oldBalance + 11,true,0);
+        Account updateAccount = new Account(0,client.getId(),oldBalance + 11,false,0);
         Account account4 = accountDAO.updateAccount(account.getAccountId(), updateAccount);
         Assertions.assertEquals(oldBalance + 11, account4.getBalance());
+        Assertions.assertEquals(0, account4.getCreatedDate());
+        Assertions.assertFalse(account4.isCheckingAccount());
     }
 
     @Test
-    @Order(4)
+    @Order(3)
     void get_all_accounts_by_client_id() {
         Set<Account> allAccount = accountDAO.getAllAccountsByClientId(client.getId());
         int sizeBefore = allAccount.size();
@@ -74,7 +74,7 @@ public class AccountDaoTests {
         Account account6 =  new Account(0,0,121, true, 0);
         Account account7 =  new Account(0,0,1, true, 0);
         Account account8 =  new Account(0,0,2, true, 0);
-        accountDAO.createAccount(client.getId(), account5);
+        account = accountDAO.createAccount(client.getId(), account5);
         accountDAO.createAccount(client.getId(), account6);
         accountDAO.createAccount(client.getId(), account7);
         accountDAO.createAccount(client.getId(), account8);

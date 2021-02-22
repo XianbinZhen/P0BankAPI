@@ -24,6 +24,11 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
+    public Set<Account> getAllAccountsByClientId(int clientId) {
+        return accountDAO.getAllAccountsByClientId(clientId);
+    }
+
+    @Override
     public Set<Account> getAllAccountsByBalance(int clientId, double min, double max) {
         return accountDAO.getAllAccountsByBalance(clientId, min, max);
     }

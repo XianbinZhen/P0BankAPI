@@ -54,14 +54,13 @@ public class AccountController {
         if (id == 0) {
             allAccount = accountService.getAllAccounts();
         } else {
-            System.out.println("min: " + min + " max: " + max);
             allAccount = accountService.getAllAccountsByBalance(id, min, max);
         }
         if (allAccount != null) {
             ctx.result(gson.toJson(allAccount));
             ctx.status(200);
         } else {
-            ctx.result("Account not found");
+            ctx.result("No account or client exists");
             ctx.status(404);
         }
     };
@@ -87,12 +86,12 @@ public class AccountController {
     public Handler updateAccountHandler = ctx -> {
         int cid = Integer.parseInt(ctx.pathParam("cid"));
         int id = Integer.parseInt(ctx.pathParam("aid"));
-        Account account = gson.fromJson(ctx.body(), Account.class);
-        if (account != null) {
-            account = accountService.getAccountById(id);
+        Account updateAccount = gson.fromJson(ctx.body(), Account.class);
+        if (updateAccount != null) {
+            Account account = accountService.getAccountById(id);
             if (account != null) {
                 if (account.getClientId() == cid) {
-                    account = accountService.updateAccount(id, account);
+                    account = accountService.updateAccount(cid, updateAccount);
                     if (account == null) {
                         ctx.result("Account not found");
                         ctx.status(404);

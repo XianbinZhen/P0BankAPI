@@ -37,9 +37,14 @@ public class ClientController {
         } else {
             allClients = clientService.getClientByName(name);
         }
-        String allClientJSON = gson.toJson(allClients);
-        ctx.result(allClientJSON);
+        if (allClients != null) {
+            String allClientJSON = gson.toJson(allClients);
+            ctx.result(allClientJSON);
+        } else {
+            ctx.result("No matching record found");
+        }
         ctx.status(200);
+
     };
 
     public Handler getClientByIdHandler = ctx -> {
@@ -64,7 +69,7 @@ public class ClientController {
             client = clientService.updateClient(client);
             if (client != null) {
                 ctx.result(gson.toJson(client));
-                ctx.status(202);
+                ctx.status(200);
             } else {
                 ctx.result("Client not found");
                 ctx.status(404);
