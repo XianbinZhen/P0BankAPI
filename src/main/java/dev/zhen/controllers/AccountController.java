@@ -12,6 +12,8 @@ public class AccountController {
 
     private AccountService accountService = null;
     private static Gson gson = new Gson();
+    private static final String STR_MIN = "STR_MIN";
+    private static final String STR_MAX = "STR_MAX";
 
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
@@ -36,7 +38,25 @@ public class AccountController {
     };
 
     public Handler getAllAccountsHandler = ctx -> {
-        Set<Account> allAccount = accountService.getAllAccounts();
+        int id = Integer.parseInt(ctx.pathParam("cid"));
+        String strMax = ctx.queryParam("amountLessThan", STR_MAX);
+        String strMin = ctx.queryParam("amountGreaterThan", STR_MIN);
+        double min, max;
+        if (strMin.equals(STR_MIN))
+            min = -Double.MAX_VALUE;
+        else
+            min = Double.parseDouble(strMin);
+        if (strMax.equals(STR_MAX))
+            max = Double.MAX_VALUE;
+        else
+            max = Double.parseDouble(strMax);
+        Set<Account> allAccount;
+        if (id == 0) {
+            allAccount = accountService.getAllAccounts();
+        } else {
+            System.out.println("min: " + min + " max: " + max);
+            allAccount = accountService.getAllAccountsByBalance(id, min, max);
+        }
         if (allAccount != null) {
             ctx.result(gson.toJson(allAccount));
             ctx.status(200);
@@ -46,39 +66,47 @@ public class AccountController {
         }
     };
 
-    public Handler getAllAccountsByClientIdHandler = ctx -> {
-        int id = Integer.parseInt(ctx.pathParam("cid"));
-        Set<Account> allAccount = accountService.getAllAccountsByClientId(id);
-        if (allAccount != null) {
-            ctx.result(gson.toJson(allAccount));
-            ctx.status(200);
-        } else {
-            ctx.result("Account not found");
-            ctx.status(404);
-        }
-    };
     public Handler getAccountByIdHandler = ctx -> {
+        int cid = Integer.parseInt(ctx.pathParam("cid"));
         int id = Integer.parseInt(ctx.pathParam("aid"));
         Account account = accountService.getAccountById(id);
         if (account != null) {
-            ctx.result(gson.toJson(account));
-            ctx.status(200);
+            if (account.getClientId() == cid) {
+                ctx.result(gson.toJson(account));
+                ctx.status(200);
+            } else {
+                ctx.result("Unmatched client and account");
+                ctx.status(404);
+            }
+
         } else {
             ctx.result("Account not found");
             ctx.status(404);
         }
     };
     public Handler updateAccountHandler = ctx -> {
+        int cid = Integer.parseInt(ctx.pathParam("cid"));
         int id = Integer.parseInt(ctx.pathParam("aid"));
         Account account = gson.fromJson(ctx.body(), Account.class);
         if (account != null) {
-            account = accountService.updateAccount(id, account);
-            if (account == null) {
+            account = accountService.getAccountById(id);
+            if (account != null) {
+                if (account.getClientId() == cid) {
+                    account = accountService.updateAccount(id, account);
+                    if (account == null) {
+                        ctx.result("Account not found");
+                        ctx.status(404);
+                    } else {
+                        ctx.result(gson.toJson(account));
+                        ctx.status(200);
+                    }
+                } else {
+                    ctx.result("Unmatched client and account");
+                    ctx.status(404);
+                }
+            } else {
                 ctx.result("Account not found");
                 ctx.status(404);
-            } else {
-                ctx.result(gson.toJson(account));
-                ctx.status(200);
             }
         } else {
             ctx.result("Bad request");
@@ -87,14 +115,27 @@ public class AccountController {
     };
 
     public Handler deleteAccountByIdHandler = ctx -> {
+        int cid = Integer.parseInt(ctx.pathParam("cid"));
         int id = Integer.parseInt(ctx.pathParam("aid"));
-        boolean isDeleted = accountService.deleteAccountById(id);
-        if (isDeleted) {
-            ctx.result("Account is deleted");
-            ctx.status(200);
+        Account account = accountService.getAccountById(id);
+        if (account != null) {
+            if (account.getClientId() == cid) {
+                boolean isDeleted = accountService.deleteAccountById(id);
+                if (isDeleted) {
+                    ctx.result("Account is deleted");
+                    ctx.status(200);
+                } else {
+                    ctx.result("Failed to delete account");
+                    ctx.status(404);
+                }
+            } else {
+                ctx.result("Unmatched client and account");
+                ctx.status(404);
+            }
         } else {
-            ctx.result("Failed to delete account");
+            ctx.result("Account not found");
             ctx.status(404);
         }
+
     };
 }

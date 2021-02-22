@@ -39,6 +39,11 @@ public class AccountDaoLoacal implements AccountDAO{
     }
 
     @Override
+    public Set<Account> getAllAccountsByBalance(int clientId, double min, double max) {
+        return null;
+    }
+
+    @Override
     public Account getAccountById(int id) {
         return accountTable.get(id);
     }

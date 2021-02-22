@@ -26,11 +26,10 @@ public class App {
         app.delete("/clients/:cid", clientController.deleteClientByIdHandler);
 
         app.post("/clients/:cid/accounts", accountController.createAccountHandler);
-        app.get("/accounts", accountController.getAllAccountsHandler);
-        app.get("/clients/:cid/accounts", accountController.getAllAccountsByClientIdHandler);
-        app.get("/accounts/:aid", accountController.getAccountByIdHandler);
-        app.put("/accounts/:aid", accountController.updateAccountHandler);
-        app.delete("/accounts/:aid", accountController.deleteAccountByIdHandler);
+        app.get("/clients/:cid/accounts", accountController.getAllAccountsHandler);
+        app.get("/clients/:cid/accounts/:aid", accountController.getAccountByIdHandler);
+        app.put("/clients/:cid/accounts/:aid", accountController.updateAccountHandler);
+        app.delete("/clients/:cid/accounts/:aid", accountController.deleteAccountByIdHandler);
 
         app.start();
     }

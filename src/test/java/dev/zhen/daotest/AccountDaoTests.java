@@ -61,15 +61,37 @@ public class AccountDaoTests {
     void get_all_accounts() {
         Set<Account> allAccount = accountDAO.getAllAccounts();
         int sizeBefore = allAccount.size();
-        Account account4 =  new Account(0,0,120, true, 0);
+        Account account4 =  new Account(0,0,110, true, 0);
         accountDAO.createAccount(client.getId(), account4);
         allAccount = accountDAO.getAllAccounts();
         Assertions.assertEquals(allAccount.size(), sizeBefore + 1);
     }
 
-
     @Test
     @Order(5)
+    void get_all_accounts_by_balance() {
+        Account account5 =  new Account(0,0,120, true, 0);
+        Account account6 =  new Account(0,0,121, true, 0);
+        Account account7 =  new Account(0,0,1, true, 0);
+        Account account8 =  new Account(0,0,2, true, 0);
+        accountDAO.createAccount(client.getId(), account5);
+        accountDAO.createAccount(client.getId(), account6);
+        accountDAO.createAccount(client.getId(), account7);
+        accountDAO.createAccount(client.getId(), account8);
+        Set<Account> allAccount = accountDAO.getAllAccountsByBalance(client.getId(), 2, 120);
+        double min = Integer.MAX_VALUE;
+        double max = Integer.MIN_VALUE;
+        for (Account a : allAccount) {
+            min = Math.min(min, a.getBalance());
+            max = Math.max(max, a.getBalance());
+        }
+        Assertions.assertTrue(min >= 2);
+        Assertions.assertTrue(max <= 120);
+    }
+
+
+    @Test
+    @Order(6)
     void delete_account_by_id() {
         Set<Account> allAccount = accountDAO.getAllAccounts();
         int sizeBeforeDelete = allAccount.size();

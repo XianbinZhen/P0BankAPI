@@ -96,6 +96,38 @@ public class AccountDaoPostgres implements AccountDAO{
     }
 
     @Override
+    public Set<Account> getAllAccountsByBalance(int clientId, double min, double max) {
+        try (Connection connection = ConnectionUtil.createConnection()) {
+            String sql = "select * from account where client_id = ? and balance >= ? and balance <= ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, clientId);
+            preparedStatement.setDouble(2, min);
+            preparedStatement.setDouble(3, max);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            Set<Account> allAccounts = new HashSet<>();
+            while (resultSet.next()) {
+                Account account = new Account(clientId);
+                int accountId = resultSet.getInt("account_id");
+                double balance = resultSet.getDouble("balance");
+                long createdDate =  resultSet.getLong("created_date");
+                boolean isChecking = resultSet.getBoolean("is_checking");
+                account.setAccountId(accountId);
+                account.setBalance(balance);
+                account.setCreatedDate(createdDate);
+                account.setCheckingAccount(isChecking);
+                allAccounts.add(account);
+            }
+            if (allAccounts.size() > 0)
+                return allAccounts;
+            else
+                return null;
+        } catch (SQLException sqlException) {
+            logger.error("Failed to get all accounts by client id and balance", sqlException);
+            return null;
+        }
+    }
+
+    @Override
     public Account getAccountById(int id) {
         try (Connection connection = ConnectionUtil.createConnection()) {
             String sql ="select * from account where account_id = ?";
