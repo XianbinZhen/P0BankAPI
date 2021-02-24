@@ -10,6 +10,7 @@ public interface ClientService {
     Set<Client> getAllClients();
     Client getClientById(int id);
     Set<Client> getClientByName(String name);
+    Set<Client> getClientByFirstName(String name);
     Client updateClient(Client client);
     boolean deleteClientById(int id);
 

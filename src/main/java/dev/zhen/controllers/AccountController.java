@@ -91,7 +91,7 @@ public class AccountController {
             Account account = accountService.getAccountById(id);
             if (account != null) {
                 if (account.getClientId() == cid) {
-                    account = accountService.updateAccount(cid, updateAccount);
+                    account = accountService.updateAccount(id, updateAccount);
                     if (account == null) {
                         ctx.result("Account not found");
                         ctx.status(404);
