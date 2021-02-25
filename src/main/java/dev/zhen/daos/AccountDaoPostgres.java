@@ -183,7 +183,6 @@ public class AccountDaoPostgres implements AccountDAO{
                 }
             }
         }
-
     }
 
     @Override
@@ -203,6 +202,5 @@ public class AccountDaoPostgres implements AccountDAO{
         } else {
             return false;
         }
-
     }
 }

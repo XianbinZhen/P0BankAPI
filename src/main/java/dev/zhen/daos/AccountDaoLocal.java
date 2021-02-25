@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class AccountDaoLoacal implements AccountDAO{
+public class AccountDaoLocal implements AccountDAO{
 
     private final Map<Integer, Account> accountTable = new HashMap<>();
     private int idCounter = 0;
@@ -23,7 +23,7 @@ public class AccountDaoLoacal implements AccountDAO{
 
     @Override
     public Set<Account> getAllAccounts() {
-        return new HashSet<Account>(accountTable.values());
+        return new HashSet<>(accountTable.values());
     }
 
     @Override
